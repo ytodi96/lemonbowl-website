@@ -1,0 +1,14 @@
+# Leak guard. Set up once per clone:
+#   pip install pre-commit && pre-commit install
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.28.0
+    hooks:
+      - id: gitleaks
+
+  - repo: local
+    hooks:
+      - id: leak-guard
+        name: leak guard (phone numbers, do-not-publish names, blocked files)
+        entry: python scripts/leak_guard.py
+        language: system

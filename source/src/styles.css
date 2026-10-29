@@ -1,0 +1,251 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * The Lemon Bowl design system.
+ * Gold / cream / charcoal palette, serif headings, sans body.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-sans: "Work Sans", system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-deep: var(--primary-deep);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-coral: var(--coral);
+  --color-coral-foreground: var(--coral-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --shadow-soft: var(--shadow-soft);
+  --shadow-lift: var(--shadow-lift);
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* Cream background, charcoal ink */
+  --background: oklch(0.972 0.017 92);
+  --foreground: oklch(0.253 0.012 70);
+
+  /* Warm white cards */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.253 0.012 70);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.253 0.012 70);
+
+  /* Gold */
+  --primary: oklch(0.788 0.126 85.5);
+  --primary-foreground: oklch(0.253 0.012 70);
+  --primary-deep: oklch(0.694 0.124 82.5);
+
+  --secondary: oklch(0.952 0.019 90);
+  --secondary-foreground: oklch(0.253 0.012 70);
+  --muted: oklch(0.952 0.019 90);
+  --muted-foreground: oklch(0.483 0.017 76);
+  --accent: oklch(0.94 0.03 88);
+  --accent-foreground: oklch(0.253 0.012 70);
+
+  /* Coral accent, used sparingly */
+  --coral: oklch(0.685 0.096 12);
+  --coral-foreground: oklch(1 0 0);
+
+  --destructive: oklch(0.55 0.18 25);
+  --destructive-foreground: oklch(1 0 0);
+
+  --border: oklch(0.898 0.019 88);
+  --input: oklch(0.898 0.019 88);
+  --ring: oklch(0.788 0.126 85.5);
+
+  --shadow-soft: 0 1px 2px oklch(0.253 0.012 70 / 0.04), 0 8px 24px -12px oklch(0.253 0.012 70 / 0.12);
+  --shadow-lift: 0 2px 4px oklch(0.253 0.012 70 / 0.06), 0 18px 40px -18px oklch(0.253 0.012 70 / 0.22);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    color: var(--color-foreground);
+    letter-spacing: -0.01em;
+  }
+}
+
+@utility eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
+
+/* ---------------------------------------------------------------
+   Motion system — one easing curve, one short duration everywhere.
+   --------------------------------------------------------------- */
+:root {
+  --ease-standard: cubic-bezier(0.32, 0.72, 0, 1);
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+  --dur-slow: 250ms;
+}
+
+@layer base {
+  a,
+  button,
+  [role="tab"],
+  input,
+  select,
+  textarea {
+    transition-timing-function: var(--ease-standard);
+    transition-duration: var(--dur-base);
+  }
+
+  a:active,
+  button:not(:disabled):active {
+    transform: scale(0.985);
+  }
+}
+
+/* Buttons and links: gentle, consistent press + hover feedback */
+.press {
+  transition:
+    background-color var(--dur-base) var(--ease-standard),
+    border-color var(--dur-base) var(--ease-standard),
+    color var(--dur-base) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard);
+}
+
+.press:hover {
+  box-shadow: var(--shadow-lift);
+}
+
+.press:active {
+  transform: scale(0.98);
+}
+
+/* Scroll reveal — gentle fade + slide as a section enters the viewport.
+   Driven by a data attribute so runtime reveals never fight React hydration. */
+[data-reveal-state="hidden"] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity var(--dur-slow) var(--ease-standard),
+    transform var(--dur-slow) var(--ease-standard);
+  will-change: opacity, transform;
+}
+
+[data-reveal-state="shown"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--dur-slow) var(--ease-standard),
+    transform var(--dur-slow) var(--ease-standard);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity var(--dur-slow) var(--ease-standard),
+    transform var(--dur-slow) var(--ease-standard);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Deliberate image loading — placeholder tint, then a short fade */
+.img-fade {
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-standard);
+  background-color: var(--color-secondary);
+}
+
+.img-fade.is-loaded {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  [data-reveal-state],
+  .img-fade {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  a:active,
+  button:not(:disabled):active,
+  .press:active {
+    transform: none;
+  }
+}
+
+/* Right-to-left brand marquee */
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 3.5rem;
+  animation: marquee-scroll 38s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}

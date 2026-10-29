@@ -1,0 +1,41 @@
+name: leak-guard
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    env:
+      HAS_LIST_TOKEN: ${{ secrets.DO_NOT_PUBLISH_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks (API keys and secrets, full history)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # The do-not-publish list lives in the private data repo. Add a read-only
+      # fine-grained token for that repo as the DO_NOT_PUBLISH_TOKEN secret.
+      # Without it, the phone and file checks still run; the name check is skipped.
+      - name: Fetch do-not-publish list
+        if: env.HAS_LIST_TOKEN == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: ytodi96/lemonbowl-private-data
+          token: ${{ secrets.DO_NOT_PUBLISH_TOKEN }}
+          path: .private-data
+          sparse-checkout: do-not-publish.txt
+          sparse-checkout-cone-mode: false
+
+      - name: Leak guard (phone numbers, names, blocked files)
+        env:
+          DO_NOT_PUBLISH_FILE: .private-data/do-not-publish.txt
+        run: python scripts/leak_guard.py
