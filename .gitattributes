@@ -1,0 +1,2 @@
+# The static snapshot is generated HTML: keep it out of GitHub's language stats
+static-site/** linguist-generated
